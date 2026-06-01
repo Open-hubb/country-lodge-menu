@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>Country Lodge Hotel — Eden Menu</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Inter', sans-serif; background: #fff; color: #111; -webkit-font-smoothing: antialiased; }
+
+    /* Header */
+    .header { position: sticky; top: 0; z-index: 40; background: rgba(255,255,255,0.95); backdrop-filter: blur(8px); border-bottom: 1px solid #eaeaea; padding: 16px 20px; }
+    .header-sub { font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: #666; }
+    .header-title { font-family: 'Playfair Display', serif; font-size: 24px; font-weight: 600; margin-top: 2px; }
+
+    /* Category Nav */
+    .cat-nav { position: sticky; top: 65px; z-index: 30; background: #fff; border-bottom: 1px solid #eaeaea; overflow-x: auto; white-space: nowrap; padding: 12px 20px; -ms-overflow-style: none; scrollbar-width: none; }
+    .cat-nav::-webkit-scrollbar { display: none; }
+    .cat-pill { display: inline-block; padding: 6px 16px; border-radius: 50px; font-size: 13px; font-weight: 500; background: #fafafa; color: #666; border: none; cursor: pointer; margin-right: 8px; transition: all 0.2s; }
+    .cat-pill.active { background: #111; color: #fff; }
+    .cat-pill span { font-size: 11px; opacity: 0.6; margin-left: 4px; }
+
+    /* Search */
+    .search-wrap { padding: 12px 20px; }
+    .search-input { width: 100%; padding: 10px 12px 10px 36px; background: #fafafa; border: 1px solid #eaeaea; border-radius: 12px; font-size: 14px; color: #111; outline: none; font-family: 'Inter', sans-serif; }
+    .search-input::placeholder { color: rgba(102,102,102,0.5); }
+    .search-wrap svg { position: absolute; left: 32px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; color: #666; }
+    .search-wrap { position: relative; }
+
+    /* Sections */
+    .section { border-bottom: 1px solid #eaeaea; }
+    .section-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; cursor: pointer; user-select: none; }
+    .section-header h2 { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 600; }
+    .section-header .count { font-size: 12px; color: #666; margin-top: 2px; }
+    .section-header .chevron { width: 20px; height: 20px; color: #666; transition: transform 0.2s; flex-shrink: 0; }
+    .section-header .chevron.open { transform: rotate(180deg); }
+    .section-body { padding: 0 20px 16px; display: none; }
+    .section-body.open { display: block; }
+    .sub-title { font-family: 'Playfair Display', serif; font-size: 15px; font-weight: 500; padding: 12px 0 8px; border-bottom: 1px solid #f5f5f5; margin-bottom: 4px; }
+
+    /* Menu Item */
+    .item { display: flex; align-items: flex-start; justify-content: space-between; padding: 14px 0; border-bottom: 1px solid #f5f5f5; }
+    .item:last-child { border-bottom: none; }
+    .item-info { flex: 1; padding-right: 12px; }
+    .item-name { font-size: 14px; font-weight: 500; display: flex; align-items: center; gap: 6px; }
+    .item-name .tag { font-size: 12px; }
+    .item-desc { font-size: 12px; color: #666; margin-top: 4px; line-height: 1.5; }
+    .item-variants { display: flex; gap: 12px; margin-top: 4px; }
+    .item-variants span { font-size: 11px; color: #666; }
+    .item-price { font-size: 13px; font-weight: 600; margin-top: 6px; }
+
+    /* Add / Qty buttons */
+    .add-btn { width: 32px; height: 32px; border-radius: 50%; background: #111; color: #fff; border: none; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 4px; }
+    .qty-controls { display: flex; align-items: center; gap: 8px; flex-shrink: 0; margin-top: 4px; }
+    .qty-btn { width: 28px; height: 28px; border-radius: 50%; border: 1px solid #eaeaea; background: #fff; color: #666; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    .qty-btn.plus { background: #111; color: #fff; border: none; }
+    .qty-count { font-size: 14px; font-weight: 600; width: 20px; text-align: center; }
+
+    /* Cart Bar */
+    .cart-bar { position: fixed; bottom: 0; left: 0; right: 0; z-index: 50; padding: 8px 16px calc(env(safe-area-inset-bottom, 8px) + 8px); background: rgba(255,255,255,0.95); backdrop-filter: blur(8px); border-top: 1px solid #eaeaea; display: none; }
+    .cart-bar.show { display: block; }
+    .cart-bar-btn { width: 100%; display: flex; align-items: center; justify-content: space-between; background: #111; color: #fff; border: none; border-radius: 16px; padding: 14px 20px; cursor: pointer; font-family: 'Inter', sans-serif; }
+    .cart-bar-btn .badge { background: rgba(255,255,255,0.2); width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; }
+    .cart-bar-btn .label { font-size: 15px; font-weight: 500; margin-left: 12px; }
+    .cart-bar-btn .total { font-size: 15px; font-weight: 600; }
+    .cart-bar-left { display: flex; align-items: center; }
+
+    /* Drawer Overlay */
+    .overlay { position: fixed; inset: 0; z-index: 60; background: rgba(0,0,0,0.4); display: none; }
+    .overlay.show { display: block; }
+    .drawer { position: fixed; bottom: 0; left: 0; right: 0; z-index: 61; background: #fff; border-radius: 24px 24px 0 0; max-height: 80vh; display: flex; flex-direction: column; transform: translateY(100%); transition: transform 0.3s ease-out; }
+    .drawer.show { transform: translateY(0); }
+    .drawer-head { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid #eaeaea; }
+    .drawer-head h2 { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 600; }
+    .drawer-head .clear { font-size: 13px; color: #666; background: none; border: none; cursor: pointer; }
+    .drawer-head .close-x { background: none; border: none; color: #666; cursor: pointer; font-size: 20px; position: absolute; right: 20px; top: 16px; }
+    .drawer-body { flex: 1; overflow-y: auto; padding: 12px 20px; }
+    .drawer-item { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #f5f5f5; }
+    .drawer-item:last-child { border-bottom: none; }
+    .drawer-item-name { font-size: 14px; font-weight: 500; }
+    .drawer-item-price { font-size: 13px; color: #666; margin-top: 2px; }
+    .drawer-foot { padding: 16px 20px; border-top: 1px solid #eaeaea; }
+    .drawer-total { display: flex; justify-content: space-between; margin-bottom: 16px; font-size: 16px; font-weight: 600; }
+    .pay-btn { width: 100%; background: #111; color: #fff; border: none; border-radius: 16px; padding: 14px; font-size: 15px; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif; }
+
+    /* Payment Modal */
+    .pay-modal { position: fixed; inset: 0; z-index: 70; background: #fff; display: none; }
+    .pay-modal.show { display: block; }
+    .pay-modal iframe { width: 100%; height: 100%; border: none; }
+    .pay-modal .close-pay { position: absolute; top: 12px; right: 12px; z-index: 10; width: 40px; height: 40px; border-radius: 50%; background: #fafafa; border: 1px solid #eaeaea; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 18px; color: #111; }
+
+    /* Bottom padding for cart bar */
+    .menu-content { padding-bottom: 80px; }
+    .empty-msg { text-align: center; color: #666; padding: 32px 0; }
+  </style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="header">
+  <div class="header-sub">The Country Lodge Hotel</div>
+  <div class="header-title">Eden Menu</div>
+</div>
+
+<!-- Category Nav -->
+<div class="cat-nav" id="catNav"></div>
+
+<!-- Search -->
+<div class="search-wrap">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+  <input class="search-input" id="searchInput" type="text" placeholder="Search menu...">
+</div>
+
+<!-- Menu Sections -->
+<div class="menu-content" id="menuContent"></div>
+
+<!-- Cart Bar -->
+<div class="cart-bar" id="cartBar">
+  <button class="cart-bar-btn" onclick="openDrawer()">
+    <div class="cart-bar-left">
+      <div class="badge" id="cartBadge">0</div>
+      <span class="label">View Order</span>
+    </div>
+    <span class="total" id="cartTotal">NLE 0</span>
+  </button>
+</div>
+
+<!-- Drawer Overlay -->
+<div class="overlay" id="overlay" onclick="closeDrawer()"></div>
+<div class="drawer" id="drawer">
+  <div class="drawer-head">
+    <h2>Your Order</h2>
+    <button class="clear" onclick="clearCart()">Clear All</button>
+    <button class="close-x" onclick="closeDrawer()">✕</button>
+  </div>
+  <div class="drawer-body" id="drawerBody"></div>
+  <div class="drawer-foot">
+    <div class="drawer-total"><span>Total</span><span id="drawerTotal">NLE 0</span></div>
+    <button class="pay-btn" onclick="openPay()">💳 PAY BILL</button>
+  </div>
+</div>
+
+<!-- Payment Modal -->
+<div class="pay-modal" id="payModal">
+  <button class="close-pay" onclick="closePay()">✕</button>
+  <iframe src="about:blank" id="payFrame" title="Pay Bill" allow="payment"></iframe>
+</div>
+
+<script>
+// ── Menu Data ──
+const menu = [
+  { id:"salads", name:"Salads", items:[
+    {id:"s1",name:"Caesar Salad",price:350,desc:"Crisp lettuce, toasted bread, Parmesan cheese, and our homemade Caesar dressing."},
+    {id:"s2",name:"Add Grilled Chicken",price:420,desc:"Caesar salad with grilled chicken."},
+    {id:"s3",name:"Add Grilled Shrimp",price:450,desc:"Caesar salad with grilled shrimp."},
+    {id:"s4",name:"Bruschetta Smoked Salmon Salad",price:450,desc:"Herb-toasted bread with cream cheese, smoked salmon, radish, sliced onion, capers, and olive oil."},
+    {id:"s5",name:"Spicy Salmon Salad",price:null,desc:"Fresh raw salmon on a bed of salad with wasabi dressing and crispy crumbs.",tags:["🌶"]},
+    {id:"s6",name:"Crab Salad",price:450,desc:"Delicate Osaka crab, crisp vegetables, and a subtle wasabi dressing.",tags:["🌶"]},
+    {id:"s7",name:"Smoked Halloumi & Rucola Salad",price:420,desc:"Grilled halloumi with rucola, tomato, basil, garlic, lime juice, olive oil, and caramelized walnuts.",tags:["🥜"]},
+    {id:"s8",name:"Spicy Wasabi Salad",price:450,desc:"Crispy tempura shrimp on fresh salad with wasabi dressing and crunchy crumbs.",tags:["🌶"]},
+  ]},
+  { id:"cold-appetizers", name:"Cold Appetizers", items:[
+    {id:"c1",name:"Truffle Hummus with Beef",price:350,desc:"Creamy Lebanese hummus infused with truffle and topped with sautéed garlic beef."},
+    {id:"c2",name:"Guacamole Shrimp",price:375,desc:"Fresh avocado guacamole with glazed shrimp, coriander, garlic, lime, olive oil."},
+    {id:"c3",name:"Tuna Cassava Tacos",price:250,desc:"Crisp cassava tacos filled with fresh tuna and vibrant taco garnishes."},
+    {id:"c4",name:"Salmon Cassava Tacos",price:375,desc:"Crisp cassava tacos with premium raw salmon and Japanese-Latin inspired flavors."},
+    {id:"c5",name:"Seabass Carpaccio",price:500,desc:"Thinly sliced fresh seabass with extra virgin olive oil, fresh lemon, and truffle oil."},
+    {id:"c6",name:"Marinated Salmon",price:550,desc:"Fresh salmon fillet marinated with aromatic herbs, citrus, and sesame seasoning."},
+    {id:"c7",name:"Trio Tartare",price:600,desc:"Finely diced salmon, tuna, and white fish, seasoned with citrus, herbs, and spices."},
+    {id:"c8",name:"Salmon Tartare",price:600,desc:"Finely diced fresh salmon, seasoned with citrus, herbs, and subtle spices."},
+    {id:"c9",name:"Tuna Tartare",price:600,desc:"Hand-cut tuna in spicy mayo and soy blend, with avocado, tempura flakes, chili oil.",tags:["🌶"]},
+  ]},
+  { id:"hot-appetizers", name:"Hot Appetizers", items:[
+    {id:"h1",name:"Truffle Beef Rangoon",price:550,desc:"Crispy dumplings with tender beef and truffle, miso glaze and spicy sauce.",tags:["🌶"]},
+    {id:"h2",name:"Shrimp Dumplings",price:425,desc:"Pan-fried Japanese dumplings with minced shrimp, ponzu dipping sauce.",tags:["🌶"]},
+    {id:"h3",name:"Chicken Gyoza",price:425,desc:"Pan-fried Japanese dumplings with minced chicken, ponzu dipping sauce.",tags:["🌶"]},
+    {id:"h4",name:"Crispy Crazy Chicken",price:280,desc:"Crispy fried chicken served with garlic mayo.",tags:["🌶"]},
+    {id:"h5",name:"Chili Seafood",price:350,desc:"Locally sourced seafood, flash-fried in chili and five-spice blend.",tags:["🌶"]},
+    {id:"h6",name:"BBQ Wings",price:275,desc:"Grilled or fried chicken wings tossed in homemade buffalo sauce.",tags:["🌶"]},
+    {id:"h7",name:"Gari Fish with Tartar Sauce",price:320,desc:"Crispy fried fish balls coated in Salone gari, with tartar sauce.",tags:["🌶"]},
+    {id:"h8",name:"Truffle Potato Wedges",price:200,desc:"Golden fried potato wedges with truffle and Parmesan cheese."},
+    {id:"h9",name:"Calamari Chips",price:450,desc:"Golden-fried calamari strips with Japanese mayo dipping sauce."},
+    {id:"h10",name:"Kimchi Fries",price:220,desc:"Crispy golden fries topped with bold kimchi and spicy sauce.",tags:["🌶"]},
+    {id:"h11",name:"French Fries",price:150,desc:"Crispy golden fries, lightly seasoned and served hot."},
+  ]},
+  { id:"yakitori", name:"Yakitori Skewers", items:[
+    {id:"y1",name:"Yakitori Chicken",price:500,desc:"Chicken skewers glazed with teriyaki, roasted peppers and onions.",tags:["🌶"]},
+    {id:"y2",name:"Yakitori Beef",price:500,desc:"Beef skewers glazed with teriyaki, roasted peppers and onions.",tags:["🌶"]},
+    {id:"y3",name:"Yakitori Shrimps",price:500,desc:"Shrimps skewers glazed with teriyaki, roasted peppers and onions.",tags:["🌶"]},
+  ]},
+  { id:"japanese", name:"Japanese Selection", subs:[
+    { name:"Special Maki Rolls (8 pcs)", items:[
+      {id:"m1",name:"Tempura Forest",price:560,desc:"Shrimp tempura and avocado rolled for a light, crispy finish."},
+      {id:"m2",name:"Rainbow Roll",price:610,desc:"Shrimp and avocado, wrapped with crab and salmon mix."},
+      {id:"m3",name:"Aburi Salmon",price:560,desc:"Grilled salmon, shrimp, and avocado in a smoky roll."},
+      {id:"m4",name:"Volcano Maki Roll",price:620,desc:"Salmon, tuna, and shrimp, finished with spicy sauce.",tags:["🌶"]},
+      {id:"m5",name:"Crispy Spicy Salmon",price:620,desc:"Spicy salmon mix wrapped with crispy crumbs.",tags:["🌶"]},
+      {id:"m6",name:"Crab Lover",price:520,desc:"Crab mix in a crispy roll, topped with mango and avocado."},
+      {id:"m7",name:"Philly Salmon",price:520,desc:"Cream cheese, avocado, and sesame in a creamy salmon roll."},
+      {id:"m8",name:"Scallop Ravigote",price:570,desc:"Scallop and mango wrapped in a crisp, delicate roll."},
+      {id:"m9",name:"Grilled Salmon Maki",price:620,desc:"Teriyaki grilled salmon rolled with mango and avocado."},
+      {id:"m10",name:"Naked Tuna",price:620,desc:"Tuna and avocado, finished with tobiko."},
+      {id:"m11",name:"Smoked Salmon Roll",price:540,desc:"Smoked salmon around cream cheese, avocado, and lettuce."},
+      {id:"m12",name:"Smoking Lady",price:480,desc:"Crab mix with fresh mango and strawberry."},
+      {id:"m13",name:"Guacamole Seafood Roll",price:560,desc:"Salmon, tuna, and crab, topped with creamy guacamole."},
+      {id:"m14",name:"Naruto Shrimp",price:530,desc:"Crispy shrimp tempura with avocado and mango."},
+    ]},
+    { name:"Club Japanese Sandwiches", items:[
+      {id:"cj1",name:"Club Smoked Salmon",price:570,desc:"Premium smoked salmon with creamy cheese and sesame."},
+      {id:"cj2",name:"Seafood Roll",price:570,desc:"Fresh mix of tuna, salmon, and crab with guacamole."},
+      {id:"cj3",name:"Club Tobiko Crazy",price:570,desc:"Creamy crab mix and avocado with vibrant tobiko."},
+    ]},
+    { name:"Japanese Burrito", items:[
+      {id:"jb1",name:"Seafood Burrito",price:600,desc:"Tuna, salmon, crab, sushi rice, seaweed, vegetables, avocado."},
+      {id:"jb2",name:"Chicken Burrito",price:550,desc:"Tender chicken, fresh vegetables, sushi rice, and signature sauce."},
+      {id:"jb3",name:"Crab Burrito",price:550,desc:"Creamy crab mix with avocado and crisp vegetables."},
+    ]},
+    { name:"Sashimi Platters on Ice", items:[
+      {id:"sp1",name:"3 Kinds of Sashimi",price:720,desc:"Salmon, Tuna, Crab — beautifully served on ice."},
+      {id:"sp2",name:"6 Kinds of Sashimi",price:1200,desc:"Eel, Octopus, Salmon, Tuna, Crab, White Fish on ice."},
+    ]},
+    { name:"Sashimi & Nigiri", items:[
+      {id:"sn1",name:"Tuna Sashimi",price:300,tags:["🥜"]},{id:"sn2",name:"Salmon Sashimi",price:250,tags:["🥜"]},
+      {id:"sn3",name:"Hamachi Sashimi",price:200,tags:["🥜"]},{id:"sn4",name:"Crab Sashimi",price:180,tags:["🥜"]},
+      {id:"sn5",name:"Otero Salmon",price:210,tags:["🥜"]},{id:"sn6",name:"Otero Hamachi",price:180,tags:["🥜"]},
+      {id:"sn7",name:"Otero Tuna",price:230,tags:["🥜"]},{id:"sn8",name:"Salmon Nigiri",price:190,tags:["🥜"]},
+      {id:"sn9",name:"Hamachi Nigiri",price:170,tags:["🥜"]},{id:"sn10",name:"Tuna Nigiri",price:200,tags:["🥜"]},
+      {id:"sn11",name:"Shrimp Nigiri",price:180,tags:["🥜"]},
+    ]},
+    { name:"Temaki", items:[
+      {id:"t1",name:"Temaki Spicy Salmon",price:300,tags:["🌶","🥜"]},
+      {id:"t2",name:"Temaki Spicy Shrimp",price:250,tags:["🌶"]},
+      {id:"t3",name:"Trio Temaki",price:300,desc:"Crab, Tuna, Salmon hand-rolled trio."},
+    ]},
+    { name:"Poke Bowls", items:[
+      {id:"p1",name:"Salmon Poke Bowl",price:null,tags:["🥜"]},{id:"p2",name:"Tuna Poke Bowl",price:null,tags:["🥜"]},
+      {id:"p3",name:"Duo Poke Bowl (Salmon + Tuna)",price:null,tags:["🥜"]},
+      {id:"p4",name:"Shrimp Tempura Poke Bowl",price:null,tags:["🥜"]},
+      {id:"p5",name:"Vegetarian Poke Bowl",price:null,tags:["🥜"]},
+    ]},
+    { name:"Udon Noodles", items:[
+      {id:"u1",name:"Seafood Udon",price:650,tags:["🥜"]},{id:"u2",name:"Chicken Udon",price:550,tags:["🥜"]},
+      {id:"u3",name:"Shrimp Udon",price:650,tags:["🥜"]},{id:"u4",name:"Vegetable Udon",price:550,tags:["🥜"]},
+    ]},
+  ]},
+  { id:"main-course", name:"Main Course", items:[
+    {id:"mc1",name:"Jerk Chicken with Coconut Rice",price:850,desc:"Spiced grilled jerk chicken with coconut rice and fried plantain."},
+    {id:"mc2",name:"Slow-Cooked Lamb",price:950,desc:"Tender lamb, slow-braised in cardamom curry with crispy onions.",tags:["🥜"]},
+    {id:"mc3",name:"Chicken Katsu",price:700,desc:"Golden panko-crusted chicken cutlet with Japanese katsu sauce.",tags:["🥜"]},
+    {id:"mc4",name:"Salmon Truffle",price:1550,desc:"Grilled salmon with rich truffle mushroom pasta."},
+    {id:"mc5",name:"Cajun Chicken",price:800,desc:"Chicken leg in Cajun spices with white rice and creamy Cajun sauce.",tags:["🌶"]},
+    {id:"mc6",name:"Grilled Seabass",price:900,desc:"Perfectly grilled seabass with crispy skin and lemon-infused olive oil.",tags:["🌶"]},
+    {id:"mc7",name:"Roasted Fish",price:800,desc:"Roasted white fish with mashed potato, grilled vegetables, spinach sauce."},
+    {id:"mc8",name:"Grilled Tiger Prawns",price:1100,desc:"Char-grilled tiger prawns with soy, garlic, citrus, mashed potatoes.",tags:["🌶"]},
+    {id:"mc9",name:"Grilled An-Kaki Lobster",price:1600,desc:"Grilled lobster with sweet-and-sour kaki vegetable sauce.",tags:["🌶"]},
+    {id:"mc10",name:"Half Roast Chicken",price:750,desc:"Tender half chicken with Salone-style fried rice.",tags:["🌶"]},
+    {id:"mc11",name:"Beef Skewer, Salone Style",price:700,desc:"Charcoal-grilled beef skewers in Salone-style marinade with fried rice.",tags:["🌶"]},
+    {id:"mc12",name:"Seafood Garlic Butter",price:1200,desc:"Rich seafood selection in fragrant garlic butter on fried rice."},
+    {id:"mc13",name:"Grilled Shrimp Skewers",price:800,desc:"Juicy marinated shrimp grilled on skewers with Salone style fried rice."},
+  ]},
+  { id:"steak", name:"Live Steak Section", items:[
+    {id:"st1",name:"Tenderloin Steak",price:1400,desc:"Grilled beef tenderloin with roasted vegetables and baby potatoes.",tags:["🌶"]},
+    {id:"st2",name:"Salone Style Steak",price:950,desc:"Juicy grilled beef with bold Sierra Leonean spices and onion-pepper sauce.",tags:["🌶"]},
+    {id:"st3",name:"T-Bone Steak",price:1850,desc:"500g grilled T-bone with roasted vegetables and baby potatoes.",tags:["🌶"]},
+    {id:"st4",name:"Tomahawk",price:3000,desc:"Imported tomahawk steak for two, with roasted vegetables.",tags:["🌶"]},
+    {id:"st5",name:"Imported Ribs",price:1400,desc:"Grilled imported ribs with roasted vegetables and baby potatoes.",tags:["🌶"]},
+    {id:"st6",name:"Casserole Steak",price:1200,desc:"Slow-cooked tender beef simmered in rich savory gravy."},
+  ]},
+  { id:"burgers", name:"Our Burgers", items:[
+    {id:"b1",name:"Crispy Chicken Burger",price:500,desc:"Crispy fried chicken with hot sauce and cabbage slaw, served with fries.",tags:["🌶"]},
+    {id:"b2",name:"Classic Beef Burger",price:500,desc:"Grilled beef burger with special sauce, lettuce, tomato, onion, fries.",tags:["🌶"]},
+    {id:"b3",name:"Double Cheese Burger",price:550,desc:"Grilled beef burger with mozzarella, special sauce, lettuce, tomato."},
+    {id:"b4",name:"Egg Burger",price:520,desc:"Grilled beef burger with fried egg, special sauce, served with fries.",tags:["🌶"]},
+    {id:"b5",name:"Truffle Beef Burger",price:600,desc:"Grilled beef with sautéed mushrooms, truffle mayo, truffle wedges.",tags:["🌶"]},
+    {id:"b6",name:"Japanese Beef Burger",price:600,desc:"Grilled beef with Japanese mayo, Asian mushrooms, cream cheese, fries."},
+  ]},
+  { id:"pasta", name:"Pasta", items:[
+    {id:"pa1",name:"Spaghetti Bolognese",price:620,desc:"Classic spaghetti with rich meat sauce, tomato, garlic, herbs, Parmesan."},
+    {id:"pa2",name:"Fettuccine Alfredo",price:650,desc:"Tender fettuccine with sautéed chicken in creamy Alfredo sauce."},
+    {id:"pa3",name:"Gamberetti Pasta",price:680,desc:"Penne with sautéed shrimp, garlic, chili in tomato cream sauce.",tags:["🌶"]},
+    {id:"pa4",name:"Penne Arrabbiata",price:600,desc:"Penne in spicy pomodoro sauce with garlic, chili flakes, Parmesan.",tags:["🌶"]},
+    {id:"pa5",name:"Truffle Wild Mushroom Pasta",price:700,desc:"Penne in creamy truffle sauce with sautéed wild mushrooms."},
+    {id:"pa6",name:"Aglio e Olio Pasta",price:550,desc:"Spaghetti tossed with olive oil, garlic, chili, and Parmesan.",tags:["🌶"]},
+  ]},
+  { id:"pizza", name:"Pizza", items:[
+    {id:"pz1",name:"Margherita Pizza",price:400,desc:"Signature pizza sauce, cheese, olive oil, and oregano."},
+    {id:"pz2",name:"BBQ Chicken Pizza",price:490,desc:"Pizza sauce, cheese, sautéed chicken, olives, sweet peppers, corn."},
+    {id:"pz3",name:"Shrimp Hawaiian Pizza",price:520,desc:"Pizza sauce, sautéed shrimp, pineapple, sweet corn, cheese."},
+    {id:"pz4",name:"Vegetarian Pizza",price:400,desc:"Pizza sauce, cheese, olives, corn, mushrooms, onions, peppers."},
+    {id:"pz5",name:"Beef and Corn Pizza",price:500,desc:"Pizza sauce, cheese, seasoned minced beef, onions, sweet corn."},
+    {id:"pz6",name:"Pepperoni Pizza",price:500,desc:"Pizza sauce, cheese, sliced pepperoni, olive oil, oregano."},
+  ]},
+  { id:"lebanese", name:"Lebanese Corner", items:[
+    {id:"l1",name:"Fattoush",price:350,desc:"Lettuce, tomato, cucumber, radish, mint, parsley, pomegranate molasses, crispy Lebanese bread."},
+    {id:"l2",name:"Tabbouleh",price:300,desc:"Fresh parsley, tomato, spring onion, mint, fine bulgur, lemon, olive oil."},
+    {id:"l3",name:"Hummus",price:220,desc:"Creamy Lebanese hummus blended with tahini, lime, and salt."},
+    {id:"l4",name:"Moutabbal with Nuts",price:260,desc:"Smoky eggplant with tahini, Lebanese bread, pomegranate, walnuts.",tags:["🥜"]},
+    {id:"l5",name:"Kibbeh",price:350,desc:"Traditional Lebanese kibbeh with a crisp exterior and flavorful filling."},
+    {id:"l6",name:"Cheese Roll",price:240,desc:"Crispy Lebanese pastry rolls filled with melted cheese."},
+    {id:"l7",name:"Wings Provençal",price:280,desc:"Sautéed chicken wings with garlic, coriander, and fresh lemon juice."},
+    {id:"l8",name:"Spicy Fried Potatoes",price:240,desc:"Golden fried potato cubes with garlic, coriander, and chili.",tags:["🌶"]},
+    {id:"l9",name:"Beef Makanek",price:340,desc:"Pan-fried Lebanese beef sausages with onion and pomegranate molasses."},
+    {id:"l10",name:"Beef Soujuk",price:360,desc:"Pan-fried spicy beef sujuk with tomato, garlic, onion, lemon.",tags:["🌶"]},
+    {id:"l11",name:"Beef Shawarma Platter",price:550,desc:"Oriental-marinated beef with tahini, pickles, on Lebanese bread."},
+    {id:"l12",name:"Chicken Shawarma Platter",price:550,desc:"Oriental-marinated chicken with garlic paste, pickles, on Lebanese bread."},
+    {id:"l13",name:"Beef Samboussek",price:280,desc:"Crispy pastry parcels with seasoned minced beef, herbs, spices."},
+  ]},
+  { id:"african", name:"African Corner", items:[
+    {id:"af1",name:"African Dish of the Day",price:400,desc:"Available during lunch hours (11am–6pm). Ask our staff for the dish of the day."},
+  ]},
+  { id:"desserts", name:"Desserts Corner", items:[
+    {id:"d1",name:"House Dessert Selection",price:450,desc:"Check our dessert board or ask staff. All desserts made daily and fresh."},
+    {id:"d2",name:"Ice Cream Bowl",price:240,desc:"3 scoops of ice cream of your choice."},
+  ]},
+  { id:"soda", name:"Soda & Drinks", items:[
+    {id:"dr1",name:"Cola, Fanta, Sprite & Vimto",price:65},{id:"dr2",name:"Diet Cola",price:85},
+    {id:"dr3",name:"Coke Zero",price:85},{id:"dr4",name:"Tonic & Soda Water",price:85},
+    {id:"dr5",name:"Perrier",price:150},{id:"dr6",name:"Maltina",price:65},
+    {id:"dr7",name:"Ginger Beer",price:85},{id:"dr8",name:"Energy Drink",price:140},
+    {id:"dr9",name:"Small Water",price:30},{id:"dr10",name:"Large Water (Local)",price:50},
+    {id:"dr11",name:"Large Water (Imported)",price:80},{id:"dr12",name:"Large Water (Glass Bottle)",price:140},
+    {id:"dr13",name:"Fresh Juice",price:90},{id:"dr14",name:"Juice Packet",price:300},
+    {id:"dr15",name:"Organic Hibiscus Juice (Bissap)",price:90},{id:"dr16",name:"Fresh Ginger Juice",price:90},
+    {id:"dr17",name:"Juice Glass",price:70},
+  ]},
+  { id:"shakes", name:"Milkshakes & Smoothies", items:[
+    {id:"sh1",name:"Vanilla Milkshake",price:150},{id:"sh2",name:"Strawberry",price:150},
+    {id:"sh3",name:"Chocolate",price:150},{id:"sh4",name:"Oreos Milkshake",price:150},
+    {id:"sh5",name:"Special Milkshake of the Day",price:150},{id:"sh6",name:"Fruity Smoothies",price:150},
+    {id:"sh7",name:"Pineapple Smoothie",price:150},
+  ]},
+  { id:"iced-teas", name:"Iced Teas", items:[
+    {id:"it1",name:"Hibiscus & Strawberry Iced Tea",price:130},{id:"it2",name:"Minted Lemonade Iced Tea",price:130},
+    {id:"it3",name:"Apple Minted Iced Tea",price:130},{id:"it4",name:"Cranberry & Pineapple Iced Tea",price:130},
+  ]},
+  { id:"beer", name:"Beer", items:[
+    {id:"be1",name:"Star Beer",price:75},{id:"be2",name:"Mutzig",price:75},
+    {id:"be3",name:"Heineken",price:100},{id:"be4",name:"Amstel",price:75},
+    {id:"be5",name:"Guinness",price:75},{id:"be6",name:"Cider",price:105},{id:"be7",name:"Becks",price:90},
+  ]},
+  { id:"mocktails", name:"Mocktails", items:[
+    {id:"mo1",name:"Love Potion",price:160,desc:"Orange juice, strawberry, banana, peach."},
+    {id:"mo2",name:"Very Berry",price:160,desc:"Mixed berries, orange & peach."},
+    {id:"mo3",name:"Colada",price:160,desc:"Fresh pineapple juice blended with coconut milk."},
+    {id:"mo4",name:"Minted Lemonade",price:160,desc:"Lemonade and mint blended with lots of ice and sprite."},
+    {id:"mo5",name:"Red Sunset",price:160,desc:"Fresh watermelon blended with mint and lime juice."},
+    {id:"mo6",name:"Tropical Mango",price:160,desc:"Mango and pineapple juice, sweet-and-sour flavour."},
+    {id:"mo7",name:"Chapman",price:160,desc:"Orange juice, sprite, angostura bitters and grenadine syrup."},
+  ]},
+  { id:"spirits", name:"Spirits & Hard Liquor", items:[
+    {id:"sp1a",name:"House Vodka",price:140,variants:"Shot 140 · Bottle 2,000"},
+    {id:"sp2a",name:"Grey Goose",price:200,variants:"Shot 200 · Bottle 3,500"},
+    {id:"sp3a",name:"Belvedere",price:200,variants:"Shot 200 · Bottle 3,500"},
+    {id:"sp4a",name:"Red Label",price:110,variants:"Shot 110 · Bottle 2,500"},
+    {id:"sp5a",name:"Black Label",price:170,variants:"Shot 170 · Bottle 3,000"},
+    {id:"sp6a",name:"Jack Daniels",price:170,variants:"Shot 170 · Bottle 2,700"},
+    {id:"sp7a",name:"Jamesons",price:170,variants:"Shot 170 · Bottle 2,300"},
+    {id:"sp8a",name:"Chivas 12",price:200,variants:"Shot 200 · Bottle 3,500"},
+    {id:"sp9a",name:"J&B",price:130,variants:"Shot 130 · Bottle 2,000"},
+    {id:"sp10a",name:"Glenfiddich",price:220,variants:"Shot 220 · Bottle 4,500"},
+    {id:"sp11a",name:"Hennessy VS",price:220,variants:"Shot 220 · Bottle 3,500"},
+    {id:"sp12a",name:"Baileys",price:150,variants:"Shot 150 · Bottle 2,200"},
+    {id:"sp13a",name:"Amarula",price:150,variants:"Shot 150 · Bottle 2,200"},
+    {id:"sp14a",name:"Rum",price:120,variants:"Shot 120 · Bottle 1,800"},
+    {id:"sp15a",name:"Gordon's Gin",price:150,variants:"Shot 150 · Bottle 2,000"},
+    {id:"sp16a",name:"Bombay Gin",price:160,variants:"Shot 160 · Bottle 2,500"},
+    {id:"sp17a",name:"Campari",price:150,variants:"Shot 150 · Bottle 1,800"},
+    {id:"sp18a",name:"Malibu",price:100,variants:"Shot 100 · Bottle 1,800"},
+    {id:"sp19a",name:"Tequila",price:160,variants:"Shot 160 · Bottle 2,000"},
+    {id:"sp20a",name:"Digestifs",price:100},
+  ]},
+  { id:"red-wines", name:"Red Wines", items:[
+    {id:"rw1",name:"Bottega Acino d'Oro Chianti",price:260,desc:"House Wine — Classic Italian red with red cherry, plum and gentle spice.",variants:"Glass 260 · Bottle 1,200"},
+    {id:"rw2",name:"Fontbreuil — Bordeaux Supérieur 2023",price:2400,desc:"Smooth Bordeaux with black cherry, cassis and subtle vanilla."},
+    {id:"rw3",name:"Franc-Lafleur — Côtes-de-Bourg 2023",price:2600,desc:"Fresh and youthful, with lively red berry and cranberry character."},
+    {id:"rw4",name:"Puy Vallon — Médoc 2022",price:2900,desc:"Elegant and structured, with dark fruit, spice and refined tannins."},
+    {id:"rw5",name:"Château Lamothe — Bordeaux 2022",price:3600,desc:"Velvety and generous, with ripe fruit and soft spice notes."},
+  ]},
+  { id:"white-wines", name:"White Wines", items:[
+    {id:"ww1",name:"Zonin Pinot Bianco Friuli 2023",price:260,desc:"House Wine — Fresh Italian white with green apple, pear and citrus.",variants:"Glass 260 · Bottle 1,200"},
+    {id:"ww2",name:"Brume Saline — Pays d'Oc 2023",price:2900,desc:"Bright Chardonnay/Viognier blend with apricot and peach aromas."},
+    {id:"ww3",name:"Vignoble Gilbert Chon — Chardonnay 2024",price:2900,desc:"Fruit-forward Chardonnay with orchard fruits and a buttery touch."},
+    {id:"ww4",name:"Émile Durand — Chablis 2024",price:6000,desc:"Refined mineral-driven white with citrus and subtle floral character."},
+  ]},
+  { id:"champagne", name:"Prosecco & Champagne", items:[
+    {id:"ch1",name:"Glass of Prosecco",price:300},{id:"ch2",name:"Pour Moi Prosecco (Doc)",price:2000},
+    {id:"ch3",name:"Pour Moi Prosecco (DOCG)",price:3000},{id:"ch4",name:"Prosecco Brut Bottle",price:1500},
+    {id:"ch5",name:"Prosecco Rosé Bottle",price:1500},{id:"ch6",name:"Laurent Perrier Bottle",price:7000},
+    {id:"ch7",name:"Moët Chandon Bottle",price:6000},
+  ]},
+];
+
+// ── Cart State ──
+let cart = JSON.parse(localStorage.getItem('eden-cart') || '{}');
+
+function saveCart() {
+  localStorage.setItem('eden-cart', JSON.stringify(cart));
+  updateCartUI();
+}
+
+function addToCart(id, name, price) {
+  if (!cart[id]) cart[id] = { name, price, qty: 0 };
+  cart[id].qty++;
+  saveCart();
+}
+
+function updateQty(id, delta) {
+  if (!cart[id]) return;
+  cart[id].qty += delta;
+  if (cart[id].qty <= 0) delete cart[id];
+  saveCart();
+}
+
+function clearCart() {
+  cart = {};
+  saveCart();
+  closeDrawer();
+}
+
+function fmtPrice(p) {
+  if (p === null || p === undefined) return 'Market Price';
+  return 'NLE ' + p.toLocaleString();
+}
+
+function getCartTotal() {
+  return Object.values(cart).reduce((s, i) => s + (i.price || 0) * i.qty, 0);
+}
+
+function getCartCount() {
+  return Object.values(cart).reduce((s, i) => s + i.qty, 0);
+}
+
+// ── Render ──
+function countItems(cat) {
+  let c = (cat.items || []).length;
+  if (cat.subs) cat.subs.forEach(s => c += s.items.length);
+  return c;
+}
+
+function renderItem(item) {
+  const qty = cart[item.id]?.qty || 0;
+  const tags = (item.tags || []).map(t => `<span class="tag">${t}</span>`).join('');
+  const desc = item.desc ? `<div class="item-desc">${item.desc}</div>` : '';
+  const variants = item.variants ? `<div class="item-variants"><span>${item.variants}</span></div>` : '';
+  const btn = qty === 0
+    ? `<button class="add-btn" onclick="addToCart('${item.id}',\`${item.name.replace(/`/g,"'")}\`,${item.price})">+</button>`
+    : `<div class="qty-controls">
+        <button class="qty-btn" onclick="updateQty('${item.id}',-1)">−</button>
+        <span class="qty-count">${qty}</span>
+        <button class="qty-btn plus" onclick="updateQty('${item.id}',1)">+</button>
+      </div>`;
+  return `<div class="item"><div class="item-info"><div class="item-name">${item.name} ${tags}</div>${desc}${variants}<div class="item-price">${fmtPrice(item.price)}</div></div>${btn}</div>`;
+}
+
+function renderMenu(query) {
+  const q = (query || '').toLowerCase();
+  const content = document.getElementById('menuContent');
+  let html = '';
+
+  menu.forEach((cat, idx) => {
+    let allItems = [...(cat.items || [])];
+    let subsHtml = '';
+    if (cat.subs) {
+      cat.subs.forEach(sub => {
+        const filtered = q ? sub.items.filter(i => i.name.toLowerCase().includes(q) || (i.desc||'').toLowerCase().includes(q)) : sub.items;
+        if (filtered.length) {
+          subsHtml += `<div class="sub-title">${sub.name}</div>` + filtered.map(renderItem).join('');
+        }
+      });
+    }
+    const filteredItems = q ? allItems.filter(i => i.name.toLowerCase().includes(q) || (i.desc||'').toLowerCase().includes(q)) : allItems;
+    if (q && !filteredItems.length && !subsHtml) return;
+
+    const isOpen = q ? true : idx === 0;
+    const count = q ? filteredItems.length + (subsHtml ? '…' : 0) : countItems(cat);
+    html += `<div class="section" id="section-${cat.id}" data-category-id="${cat.id}">
+      <div class="section-header" onclick="toggleSection(this)">
+        <div><h2>${cat.name}</h2><div class="count">${typeof count === 'number' ? count + ' items' : 'results'}</div></div>
+        <svg class="chevron${isOpen?' open':''}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 9l-7 7-7-7"/></svg>
+      </div>
+      <div class="section-body${isOpen?' open':''}">
+        ${filteredItems.map(renderItem).join('')}
+        ${subsHtml}
+      </div>
+    </div>`;
+  });
+  content.innerHTML = html;
+}
+
+function renderNav() {
+  const nav = document.getElementById('catNav');
+  nav.innerHTML = menu.map((cat, i) =>
+    `<button class="cat-pill${i===0?' active':''}" data-id="${cat.id}" onclick="scrollToCat('${cat.id}')">${cat.name}<span>${countItems(cat)}</span></button>`
+  ).join('');
+}
+
+function toggleSection(header) {
+  const body = header.nextElementSibling;
+  const chevron = header.querySelector('.chevron');
+  body.classList.toggle('open');
+  chevron.classList.toggle('open');
+}
+
+function scrollToCat(id) {
+  const el = document.getElementById('section-' + id);
+  if (el) {
+    const top = el.getBoundingClientRect().top + window.scrollY - 120;
+    window.scrollTo({ top, behavior: 'smooth' });
+  }
+}
+
+// Active pill tracking
+function setupObserver() {
+  const observer = new IntersectionObserver(entries => {
+    entries.filter(e => e.isIntersecting).sort((a,b) => a.boundingClientRect.top - b.boundingClientRect.top).forEach(e => {
+      const id = e.target.getAttribute('data-category-id');
+      if (id) {
+        document.querySelectorAll('.cat-pill').forEach(p => p.classList.toggle('active', p.dataset.id === id));
+        const activeBtn = document.querySelector(`.cat-pill[data-id="${id}"]`);
+        if (activeBtn) activeBtn.scrollIntoView({ behavior:'smooth', block:'nearest', inline:'center' });
+      }
+    });
+  }, { rootMargin: '-120px 0px -60% 0px' });
+  document.querySelectorAll('.section').forEach(s => observer.observe(s));
+}
+
+// ── Cart UI ──
+function updateCartUI() {
+  const count = getCartCount();
+  const total = getCartTotal();
+  document.getElementById('cartBar').classList.toggle('show', count > 0);
+  document.getElementById('cartBadge').textContent = count;
+  document.getElementById('cartTotal').textContent = fmtPrice(total);
+  document.getElementById('drawerTotal').textContent = fmtPrice(total);
+
+  // Re-render item buttons
+  document.querySelectorAll('.section-body').forEach(() => {});
+  renderMenu(document.getElementById('searchInput').value);
+  setupObserver();
+
+  // Drawer items
+  const body = document.getElementById('drawerBody');
+  const items = Object.entries(cart);
+  if (!items.length) { body.innerHTML = '<div class="empty-msg">Your order is empty</div>'; return; }
+  body.innerHTML = items.map(([id, item]) =>
+    `<div class="drawer-item">
+      <div><div class="drawer-item-name">${item.name}</div><div class="drawer-item-price">${fmtPrice(item.price * item.qty)}</div></div>
+      <div class="qty-controls">
+        <button class="qty-btn" onclick="updateQty('${id}',-1)">−</button>
+        <span class="qty-count">${item.qty}</span>
+        <button class="qty-btn plus" onclick="updateQty('${id}',1)">+</button>
+      </div>
+    </div>`
+  ).join('');
+}
+
+// ── Drawer ──
+function openDrawer() {
+  document.getElementById('overlay').classList.add('show');
+  document.getElementById('drawer').classList.add('show');
+}
+function closeDrawer() {
+  document.getElementById('overlay').classList.remove('show');
+  document.getElementById('drawer').classList.remove('show');
+}
+
+// ── Payment ──
+function openPay() {
+  closeDrawer();
+  document.getElementById('payFrame').src = 'https://pay.flotme.ai/';
+  document.getElementById('payModal').classList.add('show');
+}
+function closePay() {
+  document.getElementById('payModal').classList.remove('show');
+  document.getElementById('payFrame').src = 'about:blank';
+}
+
+// ── Search ──
+document.getElementById('searchInput').addEventListener('input', function() {
+  renderMenu(this.value);
+  setupObserver();
+});
+
+// ── Init ──
+renderNav();
+renderMenu('');
+setupObserver();
+updateCartUI();
+</script>
+</body>
+</html>
