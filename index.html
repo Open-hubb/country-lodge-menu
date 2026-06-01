@@ -62,13 +62,16 @@
     .qty-btn.plus { background: #B8963E; color: #fff; border: none; }
     .qty-count { font-size: 13px; font-weight: 600; width: 18px; text-align: center; }
 
-    /* Cart Bar */
-    .cart-bar { position: fixed; bottom: 0; left: 0; right: 0; z-index: 50; padding: 8px 12px calc(env(safe-area-inset-bottom, 8px) + 6px); background: rgba(255,255,255,0.95); backdrop-filter: blur(8px); border-top: 1px solid #e8e0d0; display: none; max-width: 480px; margin: 0 auto; }
-    .cart-bar.show { display: block; }
-    .cart-bar-btn { width: 100%; display: flex; align-items: center; justify-content: space-between; background: #B8963E; color: #fff; border: none; border-radius: 14px; padding: 12px 16px; cursor: pointer; font-family: 'Inter', sans-serif; box-shadow: 0 4px 20px rgba(184,150,62,0.3); }
+    /* Bottom Bar — PAY BILL + Cart */
+    .bottom-bar { position: fixed; bottom: 0; left: 0; right: 0; z-index: 50; max-width: 480px; margin: 0 auto; padding: 8px 12px calc(env(safe-area-inset-bottom, 8px) + 6px); background: rgba(255,255,255,0.97); backdrop-filter: blur(8px); border-top: 1px solid #e8e0d0; display: flex; gap: 8px; align-items: center; }
+    .pay-bill-cta { flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px; background: #fff; color: #B8963E; border: 1.5px solid #B8963E; border-radius: 14px; padding: 12px 16px; cursor: pointer; font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; transition: all 0.2s; }
+    .pay-bill-cta:hover { background: #B8963E; color: #fff; }
+    .pay-bill-cta svg { width: 18px; height: 18px; }
+    .cart-bar-btn { flex: 1; display: flex; align-items: center; justify-content: space-between; background: #B8963E; color: #fff; border: none; border-radius: 14px; padding: 12px 16px; cursor: pointer; font-family: 'Inter', sans-serif; box-shadow: 0 4px 20px rgba(184,150,62,0.3); display: none; }
+    .cart-bar-btn.show { display: flex; }
     .cart-bar-btn .badge { background: rgba(255,255,255,0.2); width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; }
-    .cart-bar-btn .label { font-size: 14px; font-weight: 500; margin-left: 10px; }
-    .cart-bar-btn .total { font-size: 14px; font-weight: 600; }
+    .cart-bar-btn .label { font-size: 13px; font-weight: 500; margin-left: 8px; }
+    .cart-bar-btn .total { font-size: 13px; font-weight: 600; }
     .cart-bar-left { display: flex; align-items: center; }
 
     /* Drawer Overlay */
@@ -125,9 +128,13 @@
 
 </div><!-- end page-wrap -->
 
-<!-- Cart Bar -->
-<div class="cart-bar" id="cartBar">
-  <button class="cart-bar-btn" onclick="openDrawer()">
+<!-- Bottom Bar -->
+<div class="bottom-bar">
+  <button class="pay-bill-cta" onclick="openPay()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+    PAY BILL
+  </button>
+  <button class="cart-bar-btn" id="cartBarBtn" onclick="openDrawer()">
     <div class="cart-bar-left">
       <div class="badge" id="cartBadge">0</div>
       <span class="label">View Order</span>
@@ -539,7 +546,7 @@ function setupObserver() {
 function updateCartUI() {
   const count = getCartCount();
   const total = getCartTotal();
-  document.getElementById('cartBar').classList.toggle('show', count > 0);
+  document.getElementById('cartBarBtn').classList.toggle('show', count > 0);
   document.getElementById('cartBadge').textContent = count;
   document.getElementById('cartTotal').textContent = fmtPrice(total);
   document.getElementById('drawerTotal').textContent = fmtPrice(total);
