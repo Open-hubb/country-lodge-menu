@@ -55,42 +55,12 @@
     .item-variants span { font-size: 10px; color: #666; }
     .item-price { font-size: 12px; font-weight: 600; margin-top: 4px; }
 
-    /* Add / Qty buttons */
-    .add-btn { width: 30px; height: 30px; border-radius: 50%; background: #B8963E; color: #fff; border: none; font-size: 17px; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px; }
-    .qty-controls { display: flex; align-items: center; gap: 6px; flex-shrink: 0; margin-top: 2px; }
-    .qty-btn { width: 26px; height: 26px; border-radius: 50%; border: 1px solid #e8e0d0; background: #fff; color: #666; font-size: 13px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-    .qty-btn.plus { background: #B8963E; color: #fff; border: none; }
-    .qty-count { font-size: 13px; font-weight: 600; width: 18px; text-align: center; }
-
-    /* Bottom Bar — PAY BILL + Cart */
-    .bottom-bar { position: fixed; bottom: 0; left: 0; right: 0; z-index: 50; max-width: 480px; margin: 0 auto; padding: 8px 12px calc(env(safe-area-inset-bottom, 8px) + 6px); background: rgba(255,255,255,0.97); backdrop-filter: blur(8px); border-top: 1px solid #e8e0d0; display: flex; gap: 8px; align-items: center; }
-    .pay-bill-cta { flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px; background: #fff; color: #B8963E; border: 1.5px solid #B8963E; border-radius: 14px; padding: 12px 16px; cursor: pointer; font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; transition: all 0.2s; }
-    .pay-bill-cta:hover { background: #B8963E; color: #fff; }
+    /* Bottom Bar — PAY BILL only */
+    .bottom-bar { position: fixed; bottom: 0; left: 0; right: 0; z-index: 50; max-width: 480px; margin: 0 auto; padding: 8px 12px calc(env(safe-area-inset-bottom, 8px) + 6px); background: rgba(255,255,255,0.97); backdrop-filter: blur(8px); border-top: 1px solid #e8e0d0; }
+    .pay-bill-cta { width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; background: #B8963E; color: #fff; border: none; border-radius: 14px; padding: 14px 16px; cursor: pointer; font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; box-shadow: 0 4px 20px rgba(184,150,62,0.3); transition: opacity 0.2s; }
+    .pay-bill-cta:hover { opacity: 0.9; }
     .pay-bill-cta svg { width: 18px; height: 18px; }
-    .cart-bar-btn { flex: 1; display: flex; align-items: center; justify-content: space-between; background: #B8963E; color: #fff; border: none; border-radius: 14px; padding: 12px 16px; cursor: pointer; font-family: 'Inter', sans-serif; box-shadow: 0 4px 20px rgba(184,150,62,0.3); display: none; }
-    .cart-bar-btn.show { display: flex; }
-    .cart-bar-btn .badge { background: rgba(255,255,255,0.2); width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; }
-    .cart-bar-btn .label { font-size: 13px; font-weight: 500; margin-left: 8px; }
-    .cart-bar-btn .total { font-size: 13px; font-weight: 600; }
-    .cart-bar-left { display: flex; align-items: center; }
 
-    /* Drawer Overlay */
-    .overlay { position: fixed; inset: 0; z-index: 60; background: rgba(0,0,0,0.4); display: none; }
-    .overlay.show { display: block; }
-    .drawer { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%) translateY(100%); z-index: 61; background: #fff; border-radius: 20px 20px 0 0; max-height: 80vh; width: 100%; max-width: 480px; display: flex; flex-direction: column; transition: transform 0.3s ease-out; }
-    .drawer.show { transform: translateX(-50%) translateY(0); }
-    .drawer-head { display: flex; align-items: center; padding: 14px 16px; border-bottom: 1px solid #e8e0d0; gap: 8px; }
-    .drawer-head h2 { font-family: 'Cormorant Garamond', serif; font-size: 17px; font-weight: 700; color: #B8963E; flex: 1; }
-    .drawer-head .clear { font-size: 12px; color: #666; background: none; border: none; cursor: pointer; padding: 4px 8px; }
-    .drawer-head .close-x { background: none; border: none; color: #666; cursor: pointer; font-size: 18px; padding: 4px; line-height: 1; }
-    .drawer-body { flex: 1; overflow-y: auto; padding: 10px 16px; }
-    .drawer-item { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f5f5f5; }
-    .drawer-item:last-child { border-bottom: none; }
-    .drawer-item-name { font-size: 13px; font-weight: 500; }
-    .drawer-item-price { font-size: 12px; color: #666; margin-top: 2px; }
-    .drawer-foot { padding: 14px 16px; border-top: 1px solid #e8e0d0; }
-    .drawer-total { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 15px; font-weight: 600; }
-    .pay-btn { width: 100%; background: #B8963E; color: #fff; border: none; border-radius: 14px; padding: 12px; font-size: 14px; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif; box-shadow: 0 4px 16px rgba(184,150,62,0.25); }
 
     /* Payment Modal */
     .pay-modal { position: fixed; inset: 0; z-index: 70; background: #fff; display: none; }
@@ -100,7 +70,6 @@
 
     /* Bottom padding for cart bar */
     .menu-content { padding-bottom: 72px; }
-    .empty-msg { text-align: center; color: #666; padding: 28px 0; font-size: 13px; }
     .footer { text-align: center; padding: 20px 16px 80px; font-size: 11px; color: #999; }
     .footer a { color: #B8963E; text-decoration: none; font-weight: 500; }
     .footer a:hover { text-decoration: underline; }
@@ -140,28 +109,6 @@
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
     PAY BILL
   </button>
-  <button class="cart-bar-btn" id="cartBarBtn" onclick="openDrawer()">
-    <div class="cart-bar-left">
-      <div class="badge" id="cartBadge">0</div>
-      <span class="label">View Order</span>
-    </div>
-    <span class="total" id="cartTotal">NLE 0</span>
-  </button>
-</div>
-
-<!-- Drawer Overlay -->
-<div class="overlay" id="overlay" onclick="closeDrawer()"></div>
-<div class="drawer" id="drawer">
-  <div class="drawer-head">
-    <h2>Your Order</h2>
-    <button class="clear" onclick="clearCart()">Clear All</button>
-    <button class="close-x" onclick="closeDrawer()">✕</button>
-  </div>
-  <div class="drawer-body" id="drawerBody"></div>
-  <div class="drawer-foot">
-    <div class="drawer-total"><span>Total</span><span id="drawerTotal">NLE 0</span></div>
-    <button class="pay-btn" onclick="openPay()">💳 PAY BILL</button>
-  </div>
 </div>
 
 <!-- Payment Modal -->
@@ -414,44 +361,9 @@ const menu = [
   ]},
 ];
 
-// ── Cart State ──
-let cart = JSON.parse(localStorage.getItem('eden-cart') || '{}');
-
-function saveCart() {
-  localStorage.setItem('eden-cart', JSON.stringify(cart));
-  updateCartUI();
-}
-
-function addToCart(id, name, price) {
-  if (!cart[id]) cart[id] = { name, price, qty: 0 };
-  cart[id].qty++;
-  saveCart();
-}
-
-function updateQty(id, delta) {
-  if (!cart[id]) return;
-  cart[id].qty += delta;
-  if (cart[id].qty <= 0) delete cart[id];
-  saveCart();
-}
-
-function clearCart() {
-  cart = {};
-  saveCart();
-  closeDrawer();
-}
-
 function fmtPrice(p) {
   if (p === null || p === undefined) return 'Market Price';
   return 'NLE ' + p.toLocaleString();
-}
-
-function getCartTotal() {
-  return Object.values(cart).reduce((s, i) => s + (i.price || 0) * i.qty, 0);
-}
-
-function getCartCount() {
-  return Object.values(cart).reduce((s, i) => s + i.qty, 0);
 }
 
 // ── Render ──
@@ -462,18 +374,10 @@ function countItems(cat) {
 }
 
 function renderItem(item) {
-  const qty = cart[item.id]?.qty || 0;
   const tags = (item.tags || []).map(t => `<span class="tag">${t}</span>`).join('');
   const desc = item.desc ? `<div class="item-desc">${item.desc}</div>` : '';
   const variants = item.variants ? `<div class="item-variants"><span>${item.variants}</span></div>` : '';
-  const btn = qty === 0
-    ? `<button class="add-btn" onclick="addToCart('${item.id}',\`${item.name.replace(/`/g,"'")}\`,${item.price})">+</button>`
-    : `<div class="qty-controls">
-        <button class="qty-btn" onclick="updateQty('${item.id}',-1)">−</button>
-        <span class="qty-count">${qty}</span>
-        <button class="qty-btn plus" onclick="updateQty('${item.id}',1)">+</button>
-      </div>`;
-  return `<div class="item"><div class="item-info"><div class="item-name">${item.name} ${tags}</div>${desc}${variants}<div class="item-price">${fmtPrice(item.price)}</div></div>${btn}</div>`;
+  return `<div class="item"><div class="item-info"><div class="item-name">${item.name} ${tags}</div>${desc}${variants}<div class="item-price">${fmtPrice(item.price)}</div></div></div>`;
 }
 
 function renderMenu(query) {
@@ -548,46 +452,6 @@ function setupObserver() {
   document.querySelectorAll('.section').forEach(s => observer.observe(s));
 }
 
-// ── Cart UI ──
-function updateCartUI() {
-  const count = getCartCount();
-  const total = getCartTotal();
-  document.getElementById('cartBarBtn').classList.toggle('show', count > 0);
-  document.getElementById('cartBadge').textContent = count;
-  document.getElementById('cartTotal').textContent = fmtPrice(total);
-  document.getElementById('drawerTotal').textContent = fmtPrice(total);
-
-  // Re-render item buttons
-  document.querySelectorAll('.section-body').forEach(() => {});
-  renderMenu(document.getElementById('searchInput').value);
-  setupObserver();
-
-  // Drawer items
-  const body = document.getElementById('drawerBody');
-  const items = Object.entries(cart);
-  if (!items.length) { body.innerHTML = '<div class="empty-msg">Your order is empty</div>'; return; }
-  body.innerHTML = items.map(([id, item]) =>
-    `<div class="drawer-item">
-      <div><div class="drawer-item-name">${item.name}</div><div class="drawer-item-price">${fmtPrice(item.price * item.qty)}</div></div>
-      <div class="qty-controls">
-        <button class="qty-btn" onclick="updateQty('${id}',-1)">−</button>
-        <span class="qty-count">${item.qty}</span>
-        <button class="qty-btn plus" onclick="updateQty('${id}',1)">+</button>
-      </div>
-    </div>`
-  ).join('');
-}
-
-// ── Drawer ──
-function openDrawer() {
-  document.getElementById('overlay').classList.add('show');
-  document.getElementById('drawer').classList.add('show');
-}
-function closeDrawer() {
-  document.getElementById('overlay').classList.remove('show');
-  document.getElementById('drawer').classList.remove('show');
-}
-
 // ── Payment ──
 function openPay() {
   closeDrawer();
@@ -609,7 +473,6 @@ document.getElementById('searchInput').addEventListener('input', function() {
 renderNav();
 renderMenu('');
 setupObserver();
-updateCartUI();
 </script>
 </body>
 </html>
