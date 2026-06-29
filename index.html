@@ -74,15 +74,17 @@
     .footer a { color: #B8963E; text-decoration: none; font-weight: 500; }
     .footer a:hover { text-decoration: underline; }
   </style>
+  <!-- Flot dashboard Web Analytics tracker -->
+  <script defer src="https://dashboard.flotme.ai/api/public/tracker.js?id=72aac6f3-2000-4542-ab8f-5a43bea7d4e6"></script>
 </head>
 <body>
 <div class="page-wrap">
 
 <!-- Header -->
 <div class="header">
-  <img src="logo.png" alt="CLH" class="header-logo">
+  <img src="logo.png" alt="CLH" class="header-logo" id="headerLogo">
   <div class="header-text">
-    <div class="header-sub">The Country Lodge Hotel</div>
+    <div class="header-sub" id="headerSub">The Country Lodge Hotel</div>
   </div>
 </div>
 
@@ -119,7 +121,7 @@
 
 <script>
 // ── Menu Data ──
-const menu = [
+let menu = [
   { id:"salads", name:"Salads", items:[
     {id:"s1",name:"Caesar Salad",price:350,desc:"Crisp lettuce, toasted bread, Parmesan cheese, and our homemade Caesar dressing."},
     {id:"s2",name:"Add Grilled Chicken",price:420,desc:"Caesar salad with grilled chicken."},
@@ -361,9 +363,10 @@ const menu = [
   ]},
 ];
 
+let currency = 'NLE';
 function fmtPrice(p) {
   if (p === null || p === undefined) return 'Market Price';
-  return 'NLE ' + p.toLocaleString();
+  return currency + ' ' + p.toLocaleString();
 }
 
 // ── Render ──
@@ -472,6 +475,37 @@ document.getElementById('searchInput').addEventListener('input', function() {
 renderNav();
 renderMenu('');
 setupObserver();
+
+// ── Flot dashboard CMS (live menu + branding, and live preview in the editor) ──
+(function(){
+  var API = 'https://dashboard.flotme.ai/api/public/menu/72aac6f3-2000-4542-ab8f-5a43bea7d4e6';
+  function adaptDoc(d){
+    if(!d) return;
+    if(d.branding){
+      if(d.branding.currency) currency = d.branding.currency;
+      if(d.branding.restaurantName){ var hs=document.getElementById('headerSub'); if(hs) hs.textContent=d.branding.restaurantName; }
+      if(d.branding.logoUrl){ var hl=document.getElementById('headerLogo'); if(hl) hl.src=d.branding.logoUrl; }
+    }
+    if(d.sections && d.sections.length){
+      menu = d.sections.map(function(s){
+        return { id:s.id, name:s.title, items:(s.items||[]).map(function(it,i){
+          return { id:s.id+'-'+i, name:it.name, price:(typeof it.price==='number'&&it.price>0)?it.price:null, desc:it.subHeader||it.description||'', tags:it.tags||[] };
+        })};
+      });
+      var q=document.getElementById('searchInput');
+      renderNav(); renderMenu(q?q.value:''); setupObserver();
+    }
+  }
+  fetch(API).then(function(r){return r.ok?r.json():null;}).then(adaptDoc).catch(function(){});
+  if (window.parent !== window) {
+    window.addEventListener('message', function(e){
+      if (e.origin !== 'https://dashboard.flotme.ai') return;
+      if (!e.data || e.data.source !== 'flot-dashboard' || e.data.type !== 'menu-preview' || !e.data.menu) return;
+      adaptDoc(e.data.menu);
+    });
+    window.parent.postMessage({ source:'flot-site', type:'preview-ready' }, '*');
+  }
+})();
 </script>
 </body>
 </html>
